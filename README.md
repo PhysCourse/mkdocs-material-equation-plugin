@@ -7,8 +7,8 @@ in markdown equations like
 
 ```markdown
 \begin{equation}
-\label{eq:myeq}
-\int_a^b{f(x)dx} = F(b)-F(a)
+  \label{eq:myeq}
+  \int_a^b{f(x)dx} = F(b)-F(a)
 \end{equation}
 ```
 
