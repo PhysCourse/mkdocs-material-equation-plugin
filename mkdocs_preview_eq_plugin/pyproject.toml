@@ -1,0 +1,12 @@
+[build-system]
+requires = ["setuptools>=64", "wheel"]
+build-backend = "setuptools.build_meta"
+
+[project]
+name = "mkdocs-preview-eq-plugin"
+version = "0.1.0"
+description = "MkDocs plugin to preview equations"
+dependencies = ["mkdocs"]
+
+[project.entry-points."mkdocs.plugins"]
+preview-eq = "mkdocs_preview_eq_plugin:PreviewEqPlugin"

@@ -1,0 +1,9 @@
+.anchor-hidden {
+    height: 0 !important;
+    margin: 0 !important;
+    padding: 0 !important;
+    visibility: hidden !important;
+    overflow: hidden !important;
+    font-size: 0 !important;
+    line-height: 0 !important;
+}

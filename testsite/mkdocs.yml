@@ -1,0 +1,186 @@
+# Site name
+site_name: Имя Сайта
+
+# Navigation menu
+nav:
+  - Раздел 1:
+    - Глава .:
+      - Параграф 1: Chapter1/page1.md
+    - Глава 2.:
+      - Параграф 1: Chapter2/page2.md
+    
+# Theme
+theme:
+  name: material
+  features:
+    - navigation.instant.preview
+    - toc.integrate 
+  features:
+    - navigation.tabs          # Вкладки в навигации
+    - navigation.sections      # Секции в навигации
+    - navigation.sidebar       
+    - navigation.expand        # Раскрывающаяся навигация
+    - navigation.top           # Кнопка "Наверх"
+    - search.suggest           # Подсказки при поиске
+    - search.highlight         # Подсветка результатов поиска
+    - content.code.copy        # Кнопка копирования кода
+    - content.tabs.link        # Связывание вкладок
+    - navigation.instant       # Без перезагрузки страницы при переходе,Сохраняет позицию прокрутки, Сохраняет состояние вкладок, форм, кода
+    - navigation.instant.preview   # мини-превью страницы при наведении на ссылку в навигации 
+    # - toc.integrate          # Не рекомендуется: переносит содержание страницы (обычно справа) в содержание (слева)
+  # Настройки тем
+  palette:
+    # Первая (основная) цветовая схема
+    - scheme: default
+      primary: indigo
+      accent: amber
+      toggle:
+        icon: material/weather-sunny
+        name: Переключить на тёмную тему
+    # Вторая (альтернативная) цветовая схема
+    - scheme: slate
+      primary: deep purple
+      accent: lime
+      toggle:
+        icon: material/weather-night
+        name: Переключить на светлую тему
+
+# Extensions
+markdown_extensions:
+  # === УВЕДОМЛЕНИЯ ===
+  # Блоки с цветным оформлением
+  # !!! note "Заголовок"
+  #     Текст уведомления
+  - admonition
+
+  # === ВСТАВКА СНИППЕТОВ ===
+  # Позволяет вставлять содержимое других файлов в документы
+  # Использование: --8<-- "path/to/file.md"
+  - pymdownx.snippets
+
+  # === ОГЛАВЛЕНИЕ ===
+  # Генерирует оглавление с якорными ссылками (#заголовок)
+  # permalink: true добавляет значок ссылки рядом с заголовками
+  - toc:
+      permalink: true
+  
+  # === MATHJAX / LaTeX ===
+  # Поддержка математических формул через MathJax
+  # generic: true использует стандартный синтаксис \(...\) и \[...\]
+  - pymdownx.arithmatex:
+      generic: true
+
+  # === АТРИБУТЫ ЭЛЕМЕНТОВ ===
+  # Позволяет добавлять HTML-атрибуты к элементам Markdown
+  # Пример: ## Заголовок {#custom-id .class-name}
+  - attr_list
+
+  # === СНОСКИ ===
+  # Добавляет поддержку сносок как в Wikipedia
+  # Пример: Текст[^1] ... [^1]: Примечание
+  - markdown.extensions.footnotes
+  
+  # === СПИСКИ ОПРЕДЕЛЕНИЙ ===
+  # Поддержка списков определений (HTML <dl>)
+  # Термин
+  # : Определение
+  - markdown.extensions.def_list
+  
+  - markdown.extensions.meta
+  
+  # === УМНЫЕ ВЫДЕЛЕНИЯ ===
+  # Улучшенная обработка курсива и жирного текста
+  # smart_enable: all включает все улучшения
+  - pymdownx.betterem:
+      smart_enable: all
+  
+  # === ВСТАВОЧНЫЕ СИМВОЛЫ ===
+  # ^верхний индекс^ и ~нижний индекс~ 
+  - pymdownx.caret
+
+  # === ЗАЧЕРКИВАНИЕ ===
+  # ~~зачеркнутый текст~~
+  - pymdownx.tilde
+
+  # === РЕЖИМ РЕДАКТИРОВАНИЯ ===
+  # Поддержка критических пометок (++вставка++ --удаление--)
+  - pymdownx.critic
+
+  # === ВЫДЕЛЕНИЕ ТЕКСТА ===
+  # ==выделенный текст== (как <mark> в HTML)
+  - pymdownx.mark
+
+  # === РАСКРЫВАЮЩИЕСЯ БЛОКИ ===
+  # Создаёт сворачиваемые секции
+  # ??? "Заголовок"
+  #     Содержимое
+  - pymdownx.details
+
+  # === ПОДСВЕТКА КОДА (УЛУЧШЕННАЯ) ===
+  # Современная замена codehilite с нумерацией строк
+  # linenums_style: pymdownx-inline - стиль нумерации
+  - pymdownx.highlight:
+      linenums_style: pymdownx-inline
+
+  # === ВСТРОЕННАЯ ПОДСВЕТКА КОДА ===
+  # Подсветка кода внутри текста: `print()`{:.python}
+  - pymdownx.inlinehilite
+  
+
+  # === СМАРТ-СИМВОЛЫ ===
+  # Автозамена символов: (c) → ©, (tm) → ™ и т.д.
+  - pymdownx.smartsymbols
+
+  # === СНИППЕТЫ (НАСТРОЙКА) ===
+  # Настройка вставки сниппетов с проверкой путей
+  - pymdownx.snippets:
+      check_paths: true
+
+  # === УЛУЧШЕННЫЕ БЛОКИ КОДА ===
+  # Кастомные ограждения для специфичных языков/форматов
+  # plotly: поддержка графиков Plotly
+  # mermaid: поддержка диаграмм Mermaid
+  - pymdownx.superfences:
+      custom_fences:
+        #- name: plotly
+        #  class: mkdocs-plotly
+        #  format: !!python/name:mkdocs_plotly_plugin.fences.fence_plotly
+        - name: mermaid
+          class: mermaid
+          format: !!python/name:pymdownx.superfences.fence_code_format
+
+  - pymdownx.tabbed:
+      alternate_style: true
+  - pymdownx.tasklist:
+      custom_checkbox: true
+  # === HTML ВНУТРИ MARKDOWN ===
+  # Позволяет использовать HTML внутри Markdown
+  - md_in_html
+
+#hooks:
+  #- hooks/equation_hook.py
+  #- hooks/autoref_hook.py
+
+plugins:
+  - preview-eq:
+      max_level: 0
+      dolog: true
+  - tags 
+  # - plotly: # Отображает ```plotly блоки как графики !pip install mkdocs-plotly-plugin
+  #  - offline: true         # Использовать локальную библиотеку
+  #  - include_plotlyjs: cdn
+  
+  - search # Добавляет полнотекстовый поиск (включён по умолчанию)
+
+  - minify: # !pip install mkdocs-minify-plugin
+      minify_html: true
+
+
+extra_javascript:
+  - javascripts/mathjax.js # Скрипт для подключения библиотеки mathjax
+  - https://unpkg.com/mathjax@3/es5/tex-mml-chtml.js # библиотека mathjax для формул
+
+
+extra_css:
+  - css/extra.css
+
