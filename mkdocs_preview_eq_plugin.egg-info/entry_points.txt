@@ -1,2 +1,0 @@
-[mkdocs.plugins]
-preview-eq = mkdocs_preview_eq_plugin:PreviewEqPlugin

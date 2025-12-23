@@ -1,1 +1,0 @@
-mkdocs_preview_eq_plugin
