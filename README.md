@@ -1,5 +1,15 @@
 # mkdocs-material-equation-plugin
-A plugin that allows you to preview equations for materials.
+A plugin that allows you to preview equations with mkdocs-material.
+
+## Install
+
+1. Download with git and install with pip
+
+```bash
+  git clone https://github.com/PhysCourse/mkdocs-material-equation-plugin.git
+  cd mkdocs-material-equation-plugin
+  pip install .
+```
 
 ## Usage
 
@@ -13,3 +23,4 @@ in markdown equations like
 ```
 
 could be referenced as ```[ref text](#eq:myeq)```
+
