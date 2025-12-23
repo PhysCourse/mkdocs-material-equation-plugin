@@ -8,5 +8,10 @@ version = "0.1.0"
 description = "MkDocs plugin to preview equations"
 dependencies = ["mkdocs"]
 
+[tool.setuptools.packages.find]
+where = ["."]
+include = ["mkdocs_preview_eq_plugin*"]
+exclude = ["tests*"]
+
 [project.entry-points."mkdocs.plugins"]
 preview-eq = "mkdocs_preview_eq_plugin:PreviewEqPlugin"
