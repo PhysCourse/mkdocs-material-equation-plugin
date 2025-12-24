@@ -3,7 +3,7 @@ A plugin that allows you to preview equations with mkdocs-material.
 
 ## Install
 
-1. Download with git and install with pip
+Download with git and install with pip
 
 ```bash
   git clone https://github.com/PhysCourse/mkdocs-material-equation-plugin.git

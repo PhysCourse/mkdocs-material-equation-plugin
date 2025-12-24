@@ -74,7 +74,7 @@ def split_blocks(content):
     while i < n:
         if state == 'markdown':
             # Ищем начало кода или комментария
-            code_start = content.find('```', i)
+            code_start = content.find('`', i)
             comment_start = content.find('<!--', i)
             
             # Находим ближайший старт
@@ -99,29 +99,29 @@ def split_blocks(content):
             i = next_start
             current_block_start = i
             
-            if next_type == 'code':
-                i += 3  # Пропускаем ```
-            else:  # comment
-                i += 4  # Пропускаем <!--
-        
         elif state == 'code':
-            # Ищем конец блока кода ```
-            code_end = content.find('```', i)
+            # 1) смотрим на количество обратных апострофов
+            backtick_count = 0
+            while i < n and content[i] == '`':
+                backtick_count += 1
+                i += 1  
+            code_end = content.find('`' * backtick_count, i)
             if code_end == -1:
                 # Незакрытый блок кода - считаем до конца
                 blocks.append(ContentBlock(content[current_block_start:], 'code'))
                 break
             
             # Добавляем блок кода
-            code_content = content[current_block_start:code_end + 3]
+            code_content = content[current_block_start:code_end + backtick_count]
             blocks.append(ContentBlock(code_content, 'code'))
             
-            i = code_end + 3
+            i = code_end + backtick_count
             state = 'markdown'
             current_block_start = i
         
         elif state == 'comment':
             # Ищем конец комментария -->
+            i+=4  # Пропускаем <!--
             comment_end = content.find('-->', i)
             if comment_end == -1:
                 # Незакрытый комментарий - считаем до конца
@@ -132,7 +132,7 @@ def split_blocks(content):
             comment_content = content[current_block_start:comment_end + 3]
             blocks.append(ContentBlock(comment_content, 'comment'))
             
-            i = comment_end + 3
+            i = comment_end + 3 # Пропускаем -->
             state = 'markdown'
             current_block_start = i
     
