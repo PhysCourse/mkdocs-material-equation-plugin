@@ -48,6 +48,7 @@ class EquationProcessor:
             if not(True in [ (env_name == env) or (env_name == env+'*') for env in equation_envs]):
                 return match.group(0)  # Не обрабатываем
             
+
             # Ищем label в содержимом окружения
             label_match = re.search(r'\\label\{([^}]+)\}', env_content)
             if not label_match:
@@ -56,15 +57,20 @@ class EquationProcessor:
                 env_content = re.sub(r'\\label\{[^}]+\}\s*', '', env_content)
                 label = label_match.group(1)
             
-            
+            # Нужно найти отступы r'\n\s*' перед \end{...}
+            indent_match = re.search(r'\n(\s*)', env_content)
+            if indent_match:
+                indent = indent_match.group(1)
+            else:
+                indent = ''
             # Обрабатываем \tag если есть
-            env_content,has_tag,equation_number = self._process_tag_command(env_content, env_name, header_stack)
+            env_content,has_tag,equation_number = self._process_tag_command(env_content, env_name, header_stack,indent)
             if(has_tag):
                 if(not label):
                     label = f'eq-{equation_number.replace(".","-")}'
                 # Создаем анкоры
-                start_anchor = f'<h6 id="{label}" class="anchor-hidden" headertag = "({{equation_number}})"></h6>\n'
-                end_anchor = f'\n<h6 id="end-eq-{label}" class="anchor-hidden"></h6>'
+                start_anchor = f'{indent}<h6 id="{label}" class="anchor-hidden" headertag = "({{equation_number}})"></h6>\n'
+                end_anchor = f'\n{indent}<h6 id="end-eq-{label}" class="anchor-hidden"></h6>'
                 #(not self.log) or print("set anchor")
             else:
                 start_anchor = ""
@@ -77,7 +83,7 @@ class EquationProcessor:
         pattern = r'(\\begin\{\s*(\w+?\*?)\s*\})(.*?)(\\end\{\2\})'
         return re.sub(pattern, process_environment, content, flags=re.DOTALL)
 
-    def _process_tag_command(self, content: str, env_name: str,header_stack) -> Tuple[str,bool]:
+    def _process_tag_command(self, content: str, env_name: str,header_stack,indent = "") -> Tuple[str,bool]:
         """Обрабатывает команду \\tag в уравнении"""
         
         # Если есть \tag, заменяем его содержимое
@@ -107,9 +113,9 @@ class EquationProcessor:
                 # Для equation добавляем после \begin{equation}\n
                 begin_pos = content.find('\n')
                 if begin_pos != -1:
-                    content = f'\n\\tag{{{equation_number}}} ' + content
+                    content = f'\n{indent}\\tag{{{equation_number}}} ' + content
                 else:
-                    content = f' \\tag{{{equation_number}}} ' + content
+                    content = f'\\tag{{{equation_number}}} ' + content
                 has_tag = True
         return (content,has_tag,equation_number)
     def _generate_equation_number(self,header_stack) -> str:
@@ -186,4 +192,7 @@ class PreviewEqPlugin(BasePlugin):
                 raise e
             print(f"❌ Equation processing error: {e}")
         return markdown
+    def on_page_content(self, html, /, *, page, config, files):
+        #print(html)
+        return html
 

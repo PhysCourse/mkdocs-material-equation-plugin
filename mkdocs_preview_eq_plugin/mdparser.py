@@ -63,6 +63,48 @@ def process_md_blocks(blocks: List[ContentBlock], max_level: int = 1) -> List[Co
         processed_blocks.append(new_block)
     return processed_blocks
 
+
+def count_consecutive(s, i, char):
+    count = 0
+    while i < len(s) and s[i] == char:
+        count += 1
+        i += 1
+    return count
+
+def find_n_repeat(content, start, char, n):
+    i = start
+    while True:
+        pos = content.find(char, i)
+        if pos == -1:
+            return -1
+        count = count_consecutive(content, pos, char)
+        if count == n:
+            return pos
+        i = pos + count
+
+def rfind_spaces(content : str, start):
+    i = start
+    space_count = 0
+    while(i>0):
+        if content[i-1] == '\n':
+            return True
+        elif content[i-1].isspace():
+            space_count += 1
+            i -= 1
+        else:
+            return False
+    return True # Дошли до начала строки
+
+def is_ending_spacing(content : str, start):
+    i = start
+    while(i < len(content)):
+        if(content[i] == '\n'):
+            return True
+        if content[i].isspace():
+            i += 1
+        else:
+            return False
+    return True
 def split_blocks(content):
     """Разделяет контент на блоки: код, комментарии, markdown"""
     blocks = []
@@ -100,22 +142,76 @@ def split_blocks(content):
             current_block_start = i
             
         elif state == 'code':
-            # 1) смотрим на количество обратных апострофов
-            backtick_count = 0
-            while i < n and content[i] == '`':
-                backtick_count += 1
-                i += 1  
-            code_end = content.find('`' * backtick_count, i)
-            if code_end == -1:
-                # Незакрытый блок кода - считаем до конца
-                blocks.append(ContentBlock(content[current_block_start:], 'code'))
-                break
+            # 1) Определить, это inline блок или блок кода с новой строки
+            # блок кода начинается с новой строки и имеет не более 
+            # 3 пробелов и более 3 `
+            backtick_count = count_consecutive(content, i, '`')
+            is_new_line = rfind_spaces(content, i)
+            i+= backtick_count
+
+            if(is_new_line and backtick_count >=3):
+                while True:
+                    code_end = content.find('`' * backtick_count, i)
+                    if code_end == -1:
+                        # Незакрытый блок кода - считаем до конца
+                        i = n
+                        blocks.append(
+                            ContentBlock(
+                                content[current_block_start:], 'fence'
+                                ))
+                        break
+                    
+                    closing_count = count_consecutive(content, code_end, '`')
+                    line_start_check = rfind_spaces(
+                        content, code_end) and is_ending_spacing(
+                        content, code_end + closing_count)
+                    is_closing = closing_count == backtick_count
+                    is_same_line = not ('\n' in content[current_block_start:code_end])
+                    if(is_closing and is_same_line):
+                        # Закрывающий блок найден на той же строке
+                        i = code_end + closing_count
+                        code_content = content[current_block_start:i]
+                        blocks.append(ContentBlock(code_content, 'inline'))
+                        break
+                    if(line_start_check and is_closing):
+                        # Закрывающий блок найден
+                        i = code_end + closing_count
+                        code_content = content[current_block_start:i]
+                        blocks.append(ContentBlock(code_content, 'fence'))
+                        break
+                    i = code_end + closing_count
+            else:
+                # 2) ищем конец блока кода (точно то же число обратных апострофов)
+                # сначала ищем конец потентиального блока: '\n\s*\n'
+                newline_pos = content.find('\n', i)
+                while(newline_pos > 0):
+                    newline_pos = content.find('\n', newline_pos + 1)
+                    if(newline_pos == -1):
+                        break
+                    if(rfind_spaces(content, newline_pos)):
+                        break
+                sub_content = content[:newline_pos if newline_pos != -1 else n]
+                while True:
+                    code_end = sub_content.find('`' * backtick_count, i)
+                    if code_end == -1:
+                        # Незакрытый блок inline - считаем до конца
+                        i= len(sub_content)
+                        blocks.append(ContentBlock(content[current_block_start:len(sub_content)], 'inline'))
+                        break
+                    # Считаем количество обратных апострофов перед найденным концом
+                    preceding_count = count_consecutive(content, code_end , '`')
+
+                    if(preceding_count >= 3 and rfind_spaces(content, code_end)):
+                        i = code_end
+                        blocks.append(ContentBlock(content[current_block_start:i], 'inline'))
+                        break
+                    if preceding_count == backtick_count:
+                        i = code_end+ backtick_count
+                        blocks.append(ContentBlock(content[current_block_start:i], 'inline'))
+                        break
+                    i = code_end+ backtick_count
             
             # Добавляем блок кода
-            code_content = content[current_block_start:code_end + backtick_count]
-            blocks.append(ContentBlock(code_content, 'code'))
-            
-            i = code_end + backtick_count
             state = 'markdown'
             current_block_start = i
         
